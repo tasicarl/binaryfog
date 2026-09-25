@@ -140,9 +140,14 @@ class Background:
         y = bend_log10hc2(self.freqs, log10A[0], log10_fbend[0])
         corr = (design(th, self._deg_med) @ self._W_med)[0]
         sigma = self._wscale * 10.0 ** (design(th, self._deg_wid) @ self._W_wid)[0]
-        if not self._on_ng15_grid:                      # nearest library bin for width and skew
-            j = np.abs(np.log(self.freqs[:, None] / self.F_NG15[None, :])).argmin(axis=1)
-            corr, sigma = corr[j], sigma[j]
+        if not self._on_ng15_grid:
+            # The median correction and the width are fitted per library bin. Off that grid they
+            # are interpolated linearly in log frequency and held at the end values beyond it.
+            # Taking the nearest bin instead makes both step from bin to bin, which shows up as a
+            # visibly jagged curve as soon as the grid is finer than the bins.
+            lg, lgb = np.log10(self.freqs), np.log10(self.F_NG15)
+            corr = np.interp(lg, lgb, corr[: len(self.F_NG15)])
+            sigma = np.interp(lg, lgb, sigma[: len(self.F_NG15)])
         else:
             corr = corr[: len(self.freqs)]
             sigma = sigma[: len(self.freqs)]
