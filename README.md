@@ -43,8 +43,9 @@ about 25 MB unpacked. All are CC-BY-4.0 and none of them is redistributed here.
 | `ng15_hdall_v2` | the same, Hellings–Downs with the other correlated components |
 
 The 2026 products are the ones re-run after the parallel-tempering bug in `PTMCMCSampler`
-(erratum, *Astrophys. J. Lett.* **1006** (2026) L67). The Gaussian-process product was not re-run,
-so `ng15_hd_dmgp_v1` has no `v2`. Which product is used changes limits by more than the choice of
+(erratum, *Astrophys. J. Lett.* **1006** (2026) L67). That record does not carry a corrected
+Gaussian-process product, so `ng15_hd_dmgp_v1` is the 2024 one. Each download is pinned to a
+specific Zenodo version, so a later release cannot silently change what you get. Which product is used changes limits by more than the choice of
 correlation pattern does.
 
 ## Quickstart

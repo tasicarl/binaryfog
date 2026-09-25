@@ -10,8 +10,12 @@ Download the free-spectrum data products, so that a user needs nothing but this 
     ng15_cp_v2, ng15_hd_v2, ng15_hdall_v2 NANOGrav, Zenodo 21844115 (7 August 2026), CC-BY-4.0:
                                           the NANOGrav 15 yr free spectra re-run after the
                                           parallel-tempering bug in PTMCMCSampler, see the erratum
-                                          Astrophys. J. Lett. 1006 (2026) L67. The Gaussian-process
-                                          product was not re-run, so ng15_hd_dmgp_v1 has no v2.
+                                          Astrophys. J. Lett. 1006 (2026) L67. That record does not
+                                          carry a corrected Gaussian-process product, so
+                                          ng15_hd_dmgp_v1 is the 2024 one.
+
+Every URL below points at a specific Zenodo version rather than at the concept record, so a later
+release by NANOGrav cannot silently change what this downloads.
 
 The 2024 products carry a grid of log10 rho from -15.1 to -0.9, but the Markov chains never visited
 values below about -9; there the stored density is a numerical floor with isolated single-sample
