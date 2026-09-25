@@ -40,12 +40,29 @@ MEMBERS = {
     "ipta2_cp_v1": (OLD, "ipta2_30f_fs{cp}_ceffyl"),
     "ng15_hdall_v1": (NG23, "30f_fs{hd+mp+dp+cp}_ceffyl_hd-only"),
     "ng15_hd_dmgp_v1": (NG23, "30f_fs{hd}_100fDMGP_ceffyl"),
-    # the directory name of the Hellings-Downs product in the 2026 archive ends in a space
+    # the directory name of the Hellings-Downs product in the 2026 archive ends in a space, which
+    # _members below tolerates, so that the entry here reads as the name was meant
     "ng15_cp_v2": (NEW, "ceffyl_data/30f_fs{cp}_ceffyl"),
-    "ng15_hd_v2": (NEW, "ceffyl_data/30f_fs{hd}_ceffyl "),
+    "ng15_hd_v2": (NEW, "ceffyl_data/30f_fs{hd}_ceffyl"),
     "ng15_hdall_v2": (NEW, "ceffyl_data/30f_fs{hd+mp+dp+cp}_ceffyl_hd-only"),
 }
 NAMES = list(MEMBERS)
+
+
+def _members(zf, prefix):
+    """The files under `prefix`, matching its directories up to surrounding whitespace.
+
+    Some directory names in the published archives carry a trailing space. Comparing the parts of a
+    path with that stripped means a name that is later tidied up keeps working, and a name that is
+    not does too.
+    """
+    want = [q.strip() for q in prefix.split("/")]
+    for m in zf.namelist():
+        if m.endswith("/"):
+            continue
+        parts = [q.strip() for q in m.split("/")]
+        if parts[:len(want)] == want and len(parts) > len(want):
+            yield m
 
 
 def fetch(name, root=None, timeout=600):
@@ -62,8 +79,8 @@ def fetch(name, root=None, timeout=600):
     with urllib.request.urlopen(url, timeout=timeout) as r:
         zf = zipfile.ZipFile(io.BytesIO(r.read()))
     found = False
-    for m in zf.namelist():
-        if m.startswith(prefix + "/") and not m.endswith("/"):
+    for m in _members(zf, prefix):
+        if True:
             with zf.open(m) as src, open(out / Path(m).name, "wb") as dst:
                 shutil.copyfileobj(src, dst)
             found = True
