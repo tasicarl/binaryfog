@@ -93,18 +93,23 @@ class Background:
 
     The maps were fitted on the NANOGrav 15 yr bins, f_i = i / 16.03 yr for i = 1 ... 14, which is
     the default grid. Other frequencies inside that range are interpolated by the template and are
-    accurate to the same degree; outside it the maps are extrapolation and are refused.
+    accurate to the same degree; outside it the maps are extrapolation and are refused, unless
+    `extrapolate` is set, which allows a factor of two beyond each end and is meant for drawing a
+    continuous curve rather than for a fit.
     """
 
     F_NG15 = np.arange(1, 15) / (16.03 * 31557600.0)
     param_names = PARAM_NAMES
     prior_box = PRIOR_BOX
 
-    def __init__(self, freqs_Hz=None):
+    def __init__(self, freqs_Hz=None, extrapolate=False):
         self.freqs = np.asarray(self.F_NG15 if freqs_Hz is None else freqs_Hz, float)
-        if self.freqs.min() < 0.98 * self.F_NG15[0] or self.freqs.max() > 1.02 * self.F_NG15[-1]:
+        lo, hi = (0.5, 2.0) if extrapolate else (0.98, 1.02)
+        if self.freqs.min() < lo * self.F_NG15[0] or self.freqs.max() > hi * self.F_NG15[-1]:
             raise ValueError("the fitted maps cover 1.98 to 27.7 nHz, the NANOGrav 15 yr band; "
-                             "other bands need their own library (see build_library8.py)")
+                             "other bands need their own library (see build_library8.py). Pass "
+                             "extrapolate=True to go a factor of two beyond each end for plotting.")
+        self.extrapolated = bool(extrapolate)
         b = np.load(DATA / "bend_map_final.npz", allow_pickle=True)
         m = np.load(DATA / "median_merged.npz", allow_pickle=True)
         w = np.load(DATA / "width_map.npz", allow_pickle=True)
