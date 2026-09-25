@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "binaryfog"
+version = "0.1.0"
+description = "The supermassive black hole binary background as a nuisance in pulsar timing array searches for new physics"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Carlo Tasillo", email = "carlo.tasillo@ific.uv.es"},
+    {name = "Torsten Bringmann", email = "torsten.bringmann@fys.uio.no"},
+    {name = "Chris Gordon", email = "chris.gordon@canterbury.ac.nz"},
+]
+keywords = ["pulsar timing arrays", "gravitational waves", "supermassive black hole binaries"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = ["numpy>=1.20", "scipy>=1.7"]
+
+[project.optional-dependencies]
+table = ["pandas>=1.3"]
+test = ["pytest>=7", "pandas>=1.3"]
+
+[project.urls]
+Repository = "https://github.com/tasicarl/binaryfog"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+binaryfog = ["data/*.npz", "data/*.npy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

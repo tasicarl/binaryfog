@@ -1,0 +1,27 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# test and type caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# environments
+.venv/
+venv/
+
+# the free-spectrum products, downloaded with `python -m binaryfog.fetch`
+.binaryfog/
+
+# editor and OS
+.DS_Store
+._*
+.idea/
+.vscode/

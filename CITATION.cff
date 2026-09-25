@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+title: binaryfog
+message: >-
+  If you use this software, please cite both the software itself and the paper
+  it accompanies.
+type: software
+authors:
+  - given-names: Carlo
+    family-names: Tasillo
+    affiliation: >-
+      Instituto de Física Corpuscular (IFIC), Universitat de València-CSIC
+    email: carlo.tasillo@ific.uv.es
+  - given-names: Torsten
+    family-names: Bringmann
+    affiliation: Department of Physics, University of Oslo
+  - given-names: Chris
+    family-names: Gordon
+    affiliation: >-
+      School of Physical and Chemical Sciences, University of Canterbury
+repository-code: https://github.com/tasicarl/binaryfog
+license: MIT
+version: 0.1.0
+abstract: >-
+  The supermassive black hole binary background as a nuisance parameter in
+  pulsar timing array searches for new physics. binaryfog supplies the
+  distribution of gravitational wave backgrounds a holodeck population model
+  predicts, without calling holodeck, marginalises over that distribution inside
+  the free-spectrum likelihood, and profiles over the six astrophysical
+  parameters under their observational priors.
+keywords:
+  - pulsar timing arrays
+  - gravitational waves
+  - supermassive black hole binaries
+  - early universe
