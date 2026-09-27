@@ -9,8 +9,8 @@ as good as the assumption made about them. The usual assumption is a power law w
 and slope `gamma` drawn from a fixed two-dimensional Gaussian. That hides two things: the
 astrophysical parameters that produce the background are uncertain, and the background is not a
 curve at all. The binaries are a finite random set of sources, so each universe realises a
-different spectrum, and in the highest frequency bins that scatter is larger than the measurement
-error.
+different spectrum, and in the highest frequency bins that scatter reaches two fifths of the
+measurement uncertainty.
 
 `binaryfog` supplies the distribution of backgrounds predicted by a holodeck population model
 without calling holodeck, integrates over it inside the likelihood, and profiles over the
