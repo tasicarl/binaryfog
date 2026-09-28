@@ -12,7 +12,7 @@ Download the free-spectrum data products, so that a user needs nothing but this 
                                           parallel-tempering bug in PTMCMCSampler, see the erratum
                                           Astrophys. J. Lett. 1006 (2026) L67. That record does not
                                           carry a corrected Gaussian-process product, so
-                                          ng15_hd_dmgp_v1 is the 2024 one.
+                                          ng15_hd_dmgp_v1 is the 2023 one.
 
 Every URL below points at a specific Zenodo version rather than at the concept record, so a later
 release by NANOGrav cannot silently change what this downloads.
