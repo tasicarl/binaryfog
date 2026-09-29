@@ -118,6 +118,36 @@ fixed-lifetime normalisation makes the sub-parsec hardening so fast that the ban
 fit can switch the binaries off without touching a galaxy parameter. Two of every five models with
 an outer index above 1.5 and a break below 20 pc have no background left.
 
+## Inside someone else's sampler
+
+The common case is a Markov chain over the parameters of a new-physics model, in which the six
+astrophysical parameters are dealt with at every step. Two ways, with very different costs:
+
+```python
+like = bf.Likelihood(bf.FreeSpectrum.load("ng15_cp_v2"), bf.Background())
+
+# (a) carry the astrophysics as six more sampled dimensions: ~3 ms per call
+lnL = like.ln_like(my_spectrum(freqs, **my_params), theta_astro)
+
+# (b) profile it out at each step: ~6 s per call, and it opens its own process pool,
+#     so pass jobs=1 if the chain is already parallel
+scan = bf.ProfileScan(like, my_spectrum, scan={k: np.array([v]) for k, v in my_params.items()},
+                      astro_prior="nanograv", restarts=4, sweeps=0)
+lnL = float(scan.run(jobs=1)["lnL"].iloc[0])
+```
+
+Notes for (b), measured on the dark sector phase transition of the paper, three model parameters
+on top of the six astrophysical ones:
+
+* One profiled point takes about six seconds, against three milliseconds for one likelihood call.
+  Worth it only if a step of the surrounding chain already costs seconds.
+* Without a grid there is no neighbour to start from, so set `sweeps=0`. The profile is still
+  stable: four, eight and sixteen restarts agree to four decimals, and along a line in one
+  parameter no point dips below its neighbours. A model with a larger nuisance space may need more
+  restarts, and the check is the one just described.
+* The optimiser is seeded per point, so evaluating the same parameters twice gives the same number.
+  A sampler needs that.
+
 ## What is inside
 
 * **The background** is a surrogate of holodeck's classic phenomenological model: from the six
@@ -143,13 +173,15 @@ an outer index above 1.5 and a break below 20 pc have no background left.
 ```
 pip install -e ".[test]"
 pytest                                                 # about 20 s
-BINARYFOG_NG15_MODELS=<unpacked model files> pytest    # adds the PTArcade model-file tests
+pip install -e ".[models]"                              # PTArcade, only to read the model files
+BINARYFOG_NG15_MODELS=<unpacked model files> pytest    # adds the model-file tests
 ```
 
 Tests whose inputs are missing skip themselves and say what is missing. The free-spectrum tests
 need `python -m binaryfog.fetch` to have run. The model files are the ones released with the
 NANOGrav 15 yr new-physics search ([Zenodo 8092761](https://doi.org/10.5281/zenodo.8092761)) and
-reading them needs PTArcade installed. One test file compares the package value for value against
+reading them needs PTArcade, which is the `models` extra. Without it those tests
+say so and skip rather than failing on an import error. One test file compares the package value for value against
 the research scripts it was extracted from, and skips itself outside that repository.
 
 ## Limits of this version
@@ -162,8 +194,13 @@ the research scripts it was extracted from, and skips itself outside that reposi
   background on the frequencies stored with the data.
 * The realisation distribution is carried bin by bin. The correlations between bins are dropped,
   as they are in the analyses this package is compared against.
-* Wilks' theorem is used for the thresholds. Where the new-physics amplitude goes to zero and its
-  other parameters stop meaning anything, the significance it gives is an overestimate.
+* Wilks' theorem is used for the interval thresholds (`LEVELS_1D`, `LEVELS_2D`). It does not hold
+  where the new-physics amplitude is bounded below by zero and its other parameters stop meaning
+  anything there. `sigma_from_gain` handles the boundary as a Chernoff mixture, which makes a
+  significance *larger* than a plain chi-square would; the parameters being undefined rather than
+  merely unconstrained pushes the other way and is not handled. See `significance.py` for both.
+  A difference between two fits converted the same way is insensitive to this; an absolute
+  significance is not.
 
 ## Citing
 

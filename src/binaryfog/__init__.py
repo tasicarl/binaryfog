@@ -33,6 +33,7 @@ from .models import (PTArcadeModel, Sum, broken_power_law, load_ptarcade, power_
                      smbhb_power_law)
 from .priors import AGAMMA_COV, AGAMMA_MU, NANOGRAV_GAUSSIAN, ln_prior, ln_prior_agamma
 from .profile import LEVELS_1D, LEVELS_2D, ProfileScan, preference, reference_lnL, region
+from .significance import sigma_from_gain
 
 __version__ = "0.1.0"
 __all__ = ["Background", "BackgroundExtended", "FreeSpectrum", "Likelihood", "ProfileScan",
@@ -41,4 +42,5 @@ __all__ = ["Background", "BackgroundExtended", "FreeSpectrum", "Likelihood", "Pr
            "broken_power_law", "Sum",
            "NANOGRAV_GAUSSIAN", "ln_prior", "ln_prior_agamma", "AGAMMA_MU", "AGAMMA_COV",
            "region", "preference", "reference_lnL", "quantile_spectrum",
-           "bend_log10hc2", "hc2_to_h2omega", "LEVELS_1D", "LEVELS_2D", "__version__"]
+           "bend_log10hc2", "hc2_to_h2omega", "LEVELS_1D", "LEVELS_2D", "sigma_from_gain",
+           "__version__"]

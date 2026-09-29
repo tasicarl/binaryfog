@@ -19,6 +19,14 @@ import binaryfog as bf                                                        # 
 from binaryfog.freespec import DEFAULT_DIR                                    # noqa: E402
 
 MODELS = os.environ.get("BINARYFOG_NG15_MODELS")
+# The model files import PTArcade themselves, so pointing BINARYFOG_NG15_MODELS at them is not
+# enough: without it every one of these tests fails on an import error that has nothing to do with
+# this package. Both conditions are checked, and the reason says which one is missing.
+try:
+    import ptarcade                                                          # noqa: F401
+    HAVE_PTARCADE = True
+except ImportError:
+    HAVE_PTARCADE = False
 
 
 def _data_dir():
@@ -31,7 +39,10 @@ def _data_dir():
 
 
 LOCAL_DATA = _data_dir()
-needs_models = pytest.mark.skipif(not MODELS, reason="BINARYFOG_NG15_MODELS is not set")
+needs_models = pytest.mark.skipif(
+    not MODELS or not HAVE_PTARCADE,
+    reason=("BINARYFOG_NG15_MODELS is not set" if not MODELS else
+            "PTArcade is not installed, and the model files import it"))
 needs_data = pytest.mark.skipif(LOCAL_DATA is None,
                                 reason="no free spectrum; run `python -m binaryfog.fetch`")
 
