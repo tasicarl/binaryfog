@@ -23,16 +23,29 @@ the choice; an absolute significance is not.
 
 Pass ``boundary=False`` for the plain chi2_k, which is what is usually quoted elsewhere.
 
+The tail probability p is turned into a number of standard deviations Z in the standard way for a
+discovery test, one-sided [2]: Z = Phi^-1(1 - p), the upward Gaussian fluctuation with the same
+probability. With the boundary mixture and one parameter this is Z = sqrt(TS). Pass ``sided="two"``
+for Z = Phi^-1(1 - p/2), the two-sided conversion of [1] (Methods), which applied to the halved p
+counts the one-sidedness twice and so gives larger numbers.
+
 [1] Macias et al., Nature Astron. 2 (2018) 387, arXiv:1611.06644, eqs. (2) and (3).
+[2] Cowan, Cranmer, Gross and Vitells, Eur. Phys. J. C 71 (2011) 1554, arXiv:1007.1727.
 """
 from scipy import stats
 
 __all__ = ["sigma_from_gain"]
 
 
-def sigma_from_gain(gain, ndof, boundary=True):
-    """Standard deviations from the gain in ln L of a model with `ndof` free parameters."""
+def sigma_from_gain(gain, ndof, boundary=True, sided="one"):
+    """Standard deviations from the gain in ln L of a model with `ndof` free parameters.
+
+    sided "one" (default): Z = Phi^-1(1 - p), as in Cowan et al.; "two": Z = Phi^-1(1 - p/2), as in
+    Macias et al. (the convention of binaryfog up to version 0.1.0)."""
+    if sided not in ("one", "two"):
+        raise ValueError(f"sided must be 'one' or 'two', not {sided!r}")
     p = stats.chi2.sf(2.0 * max(float(gain), 0.0), int(ndof))
     if boundary:
         p *= 0.5
-    return float(stats.norm.isf(max(p, 1e-300) / 2))
+    p = max(p, 1e-300)
+    return float(stats.norm.isf(p if sided == "one" else p / 2))

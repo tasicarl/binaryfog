@@ -199,6 +199,8 @@ the research scripts it was extracted from, and skips itself outside that reposi
   anything there. `sigma_from_gain` handles the boundary as a Chernoff mixture, which makes a
   significance *larger* than a plain chi-square would; the parameters being undefined rather than
   merely unconstrained pushes the other way and is not handled. See `significance.py` for both.
+  The tail probability is quoted one-sided, Z = Phi^-1(1 - p) (Cowan et al. 2011), so that one
+  parameter gives Z = sqrt(2 G); `sided="two"` gives the two-sided convention of Macias et al. 2018.
   A difference between two fits converted the same way is insensitive to this; an absolute
   significance is not.
 
