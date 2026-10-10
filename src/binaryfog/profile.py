@@ -10,8 +10,8 @@ and the limits are drawn from.
                        nuisance={"Treh": (1e-3, 1.0, "log")}, astro_prior="nanograv")
     table = scan.run(jobs=28)
 
-Thresholds for the regions, from Wilks' theorem: 1.15 and 3.09 in ln L for 68 and 95 per cent with
-two scanned parameters, 0.5 and 1.92 with one. At the edge of the parameter space, for instance
+Thresholds for the regions, from Wilks' theorem, at one and two standard deviations (68.3 and 95.4
+per cent of a Gaussian): 1.15 and 3.09 in ln L with two scanned parameters, 0.50 and 2.00 with one. At the edge of the parameter space, for instance
 where the new-physics amplitude goes to zero and its other parameters stop meaning anything, those
 thresholds are approximate.
 """
@@ -25,8 +25,9 @@ from scipy import optimize
 from .background import PARAM_NAMES, PRIOR_BOX
 from .priors import ln_prior, start_points
 
-LEVELS_2D = {0.68: 1.15, 0.95: 3.09}
-LEVELS_1D = {0.68: 0.5, 0.95: 1.92}
+# keyed by the number of standard deviations
+LEVELS_2D = {1: 1.15, 2: 3.09}
+LEVELS_1D = {1: 0.50, 2: 2.00}
 
 
 class ProfileScan:
@@ -291,9 +292,12 @@ def _call_seed(scan, job):
     return scan._from_seed(job)
 
 
-def region(table, level=0.68, ndim=2):
-    """Boolean mask of the grid points inside a profile-likelihood region."""
-    thr = (LEVELS_2D if ndim == 2 else LEVELS_1D)[level]
+def region(table, sigma=1, ndim=2):
+    """Boolean mask of the grid points inside the 1 or 2 sigma profile-likelihood region."""
+    levels = LEVELS_2D if ndim == 2 else LEVELS_1D
+    if sigma not in levels:
+        raise ValueError(f"sigma must be 1 or 2 (standard deviations), not {sigma!r}")
+    thr = levels[sigma]
     return table["lnL"] >= table["lnL"].max() - thr
 
 

@@ -30,12 +30,12 @@ if __name__ == "__main__":
                               nuisance={"log10_amp": (-12.0, -5.0, "linear")},
                               astro_prior="nanograv", restarts=3)
         table = scan.run(jobs=8)
-        inside = bf.region(table, 0.95, ndim=1)
+        inside = bf.region(table, 2, ndim=1)
         lo, hi = table["log10_fpeak"][inside].min(), table["log10_fpeak"][inside].max()
         best = table.loc[table["lnL"].idxmax()]
         print(f"\n{label}:")
         print(f"  best fit: peak at {10 ** best['log10_fpeak'] * 1e9:.1f} nHz, "
               f"amplitude 1e{best['log10_amp']:.2f}, ln L = {best['lnL']:.2f}")
-        print(f"  95% of the peak frequency: {10 ** lo * 1e9:.1f} to {10 ** hi * 1e9:.1f} nHz")
+        print(f"  2 sigma interval of the peak frequency: {10 ** lo * 1e9:.1f} to {10 ** hi * 1e9:.1f} nHz")
         if background is not None:
             print(f"  gain over the binaries alone: {bf.preference(table, like):.2f} ln L units")

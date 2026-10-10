@@ -35,14 +35,14 @@ if __name__ == "__main__":
         table = scan.run(jobs=JOBS)
         table.to_csv(f"pt_sound_{'binaries' if background else 'alone'}.csv", index=False)
         best = table.loc[table["lnL"].idxmax()]
-        inside = bf.region(table, 0.68, ndim=2)
+        inside = bf.region(table, 1, ndim=2)
         cell = ((grid["log10_alpha"][1] - grid["log10_alpha"][0])
                 * (grid["log10_H_R"][1] - grid["log10_H_R"][0]))
         print(f"\n{label}:")
         print(f"  best fit: alpha = 1e{best['log10_alpha']:.2f}, H_star R_star = "
               f"1e{best['log10_H_R']:.2f}, T_star = 1e{best['log10_T_star']:.2f} GeV, "
               f"ln L = {best['lnL']:.2f}")
-        print(f"  68% region covers {inside.sum() * cell:.2f} of the "
+        print(f"  1 sigma region covers {inside.sum() * cell:.2f} of the "
               f"{len(table) * cell:.2f} square decades scanned")
         if background is not None:
             print(f"  gain over the binaries alone: {bf.preference(table, like):.2f} ln L units")

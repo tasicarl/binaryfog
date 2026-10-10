@@ -64,7 +64,7 @@ scan = bf.ProfileScan(like, source,
                       nuisance={"log10_amp": (-12.0, -6.0, "linear")},
                       astro_prior="nanograv")
 table = scan.run(jobs=8)
-allowed = table[bf.region(table, 0.68, ndim=1)]
+allowed = table[bf.region(table, 1, ndim=1)]     # the 1 sigma interval
 print(bf.preference(table, like), "ln L gained over the binaries alone")
 ```
 

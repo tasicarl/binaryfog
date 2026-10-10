@@ -20,7 +20,7 @@ carries the astrophysical uncertainty rather than assuming it away.
                           scan={"tilt": np.linspace(-2, 3, 40)},
                           nuisance={"amplitude": (1e-12, 1e-6, "log")})
     table = scan.run(jobs=8)
-    inside = bf.region(table, 0.68, ndim=1)
+    inside = bf.region(table, 1, ndim=1)
 
 Conventions: spectra are h^2 Omega_GW(f) with f in Hz; the six background parameters are those of
 the classic phenomenological holodeck space, in the order of bf.PARAM_NAMES.
