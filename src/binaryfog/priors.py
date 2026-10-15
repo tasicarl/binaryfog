@@ -12,7 +12,7 @@ Prior sets for the six background parameters.
                  0.02 dex on the scatter of the black-hole to bulge relation (Kormendy and Ho 2013);
                  the mass normalisation keeps 0.2.
     "fitwidths"  as "unwidened" with 0.05 on the mass normalisation as well (its uncertainty in
-                 Kormendy and Ho 2013); "kh" the same centred on their 8.69 instead of 8.60.
+                 Kormendy and Ho 2013) and 0.05 on the scatter; "kh" the same centred on their 8.69.
     None         no prior term at all, for a pure profile likelihood over the background.
 
 A third set, the present-day measurements with their own much smaller widths, needs a library built
@@ -30,8 +30,10 @@ UNWIDENED_GAUSSIAN = {"gsmf_phi0_log10": (-2.56, 0.10), "gsmf_mchar0_log10": (10
                       "mmb_mamp_log10": (8.60, 0.20), "mmb_scatter_dex": (0.32, 0.02)}
 # all four at the widths of the underlying fits, the mass normalisation included (0.05 on the
 # normalisation of Kormendy and Ho 2013), centred once at holodeck's 8.60 and once at their 8.69
-FITWIDTHS_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.60, 0.05))
-KH_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.69, 0.05))
+# eps_mu takes 0.05 here: Kormendy and Ho quote no uncertainty on the scatter of the mass relation
+# (0.02 is that of their K-band luminosity relation), and holodeck's strong-prior set uses 0.28 +- 0.05
+FITWIDTHS_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.60, 0.05), mmb_scatter_dex=(0.32, 0.05))
+KH_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.69, 0.05), mmb_scatter_dex=(0.32, 0.05))
 GAUSSIAN_SETS = {"nanograv": NANOGRAV_GAUSSIAN, "unwidened": UNWIDENED_GAUSSIAN,
                  "fitwidths": FITWIDTHS_GAUSSIAN, "kh": KH_GAUSSIAN}
 _LO = np.array([PRIOR_BOX[k][0] for k in PARAM_NAMES])
