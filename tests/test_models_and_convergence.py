@@ -144,6 +144,23 @@ def test_published_power_law_prior_peaks_at_the_published_centre():
     assert expected == pytest.approx(0.5, abs=1e-3)
 
 
+def test_unwidened_astro_prior_uses_the_fit_widths():
+    """A step of 0.1 in the mass-function normalisation costs 1/2 under the unwidened set (width
+    0.1) and 1/32 under the published one (width 0.4); the mass normalisation keeps 0.2 in both."""
+    from binaryfog.priors import PARAM_NAMES, PRIOR_BOX, UNWIDENED_GAUSSIAN, ln_prior
+    centre = [UNWIDENED_GAUSSIAN[k][0] if k in UNWIDENED_GAUSSIAN
+              else 0.5 * (PRIOR_BOX[k][0] + PRIOR_BOX[k][1]) for k in PARAM_NAMES]
+    for name, step, cost_unwidened, cost_published in (("gsmf_phi0_log10", 0.1, 0.5, 1 / 32),
+                                                       ("mmb_mamp_log10", 0.2, 0.5, 0.5),
+                                                       ("mmb_scatter_dex", 0.02, 0.5, 0.5 / 7.5 ** 2)):
+        off = list(centre)
+        off[PARAM_NAMES.index(name)] += step
+        for which, cost in (("unwidened", cost_unwidened), ("nanograv", cost_published)):
+            assert ln_prior(centre, which) - ln_prior(off, which) == pytest.approx(cost, rel=1e-9)
+    with pytest.raises(ValueError):
+        ln_prior(centre, "widened")
+
+
 @needs_data
 def test_nuisance_prior_pulls_the_power_law_to_its_centre():
     """With no data information a profiled power law must sit at its prior centre."""

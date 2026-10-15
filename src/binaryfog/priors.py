@@ -7,6 +7,10 @@ Prior sets for the six background parameters.
                  bulge-mass relation, flat on the binary lifetime and the inner hardening index.
                  Their widths are four times the standard deviation of a fit to the galaxy data of
                  Tomczak et al. (2014); the paper gives no reason for the factor.
+    "unwidened"  the same Gaussians at the widths of the underlying fits: 0.1 on the mass-function
+                 normalisation and characteristic mass (Tomczak et al. without the factor four) and
+                 0.02 dex on the scatter of the black-hole to bulge relation (Kormendy and Ho 2013);
+                 the mass normalisation keeps 0.2.
     None         no prior term at all, for a pure profile likelihood over the background.
 
 A third set, the present-day measurements with their own much smaller widths, needs a library built
@@ -20,6 +24,9 @@ from .background import PARAM_NAMES, PRIOR_BOX
 
 NANOGRAV_GAUSSIAN = {"gsmf_phi0_log10": (-2.56, 0.40), "gsmf_mchar0_log10": (10.90, 0.40),
                      "mmb_mamp_log10": (8.60, 0.20), "mmb_scatter_dex": (0.32, 0.15)}
+UNWIDENED_GAUSSIAN = {"gsmf_phi0_log10": (-2.56, 0.10), "gsmf_mchar0_log10": (10.90, 0.10),
+                      "mmb_mamp_log10": (8.60, 0.20), "mmb_scatter_dex": (0.32, 0.02)}
+GAUSSIAN_SETS = {"nanograv": NANOGRAV_GAUSSIAN, "unwidened": UNWIDENED_GAUSSIAN}
 _LO = np.array([PRIOR_BOX[k][0] for k in PARAM_NAMES])
 _HI = np.array([PRIOR_BOX[k][1] for k in PARAM_NAMES])
 
@@ -68,12 +75,14 @@ def ln_prior(theta, which="nanograv", names=None, box=None):
         return -np.inf
     if which in (None, "uniform", "none"):
         return 0.0
-    if which != "nanograv":
-        raise ValueError(f"unknown prior set {which!r}; available: 'uniform', 'nanograv', None")
+    if which not in GAUSSIAN_SETS:
+        raise ValueError(f"unknown prior set {which!r}; available: 'uniform', "
+                         f"{', '.join(repr(k) for k in GAUSSIAN_SETS)}, None")
+    gauss = GAUSSIAN_SETS[which]
     lp = 0.0
     for name, v in zip(names, th):
-        if name in NANOGRAV_GAUSSIAN:
-            mu, sd = NANOGRAV_GAUSSIAN[name]
+        if name in gauss:
+            mu, sd = gauss[name]
             lp += -0.5 * ((v - mu) / sd) ** 2
     return lp
 
@@ -84,9 +93,10 @@ def start_points(rng, n, which="nanograv", names=None, box=None):
     box = box or PRIOR_BOX
     lo = np.array([box[k][0] for k in names])
     hi = np.array([box[k][1] for k in names])
-    centres = np.array([NANOGRAV_GAUSSIAN[k][0] if k in NANOGRAV_GAUSSIAN
+    gauss = GAUSSIAN_SETS.get(which, NANOGRAV_GAUSSIAN)
+    centres = np.array([gauss[k][0] if k in gauss
                         else 0.5 * (box[k][0] + box[k][1]) for k in names])
-    scale = np.array([NANOGRAV_GAUSSIAN[k][1] if k in NANOGRAV_GAUSSIAN
+    scale = np.array([gauss[k][1] if k in gauss
                       else 0.25 * (box[k][1] - box[k][0]) for k in names])
     if which in (None, "uniform", "none"):
         scale = scale * 2.0
