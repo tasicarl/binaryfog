@@ -8,8 +8,10 @@ Prior sets for the six background parameters.
                  Their widths are four times the standard deviation of a fit to the galaxy data of
                  Tomczak et al. (2014); the paper gives no reason for the factor.
     "unwidened"  the same Gaussians at the widths of the underlying fits: 0.1 on the mass-function
-                 normalisation and characteristic mass (Tomczak et al. without the factor four) and
-                 0.02 dex on the scatter of the black-hole to bulge relation (Kormendy and Ho 2013);
+                 normalisation and characteristic mass (holodeck's linear-in-z fit to Tomczak et al. 2014,
+                 table 3, without the factor four) and 0.02 dex on the scatter (Kormendy and Ho 2013
+                 quote 0.29 +- 0.02 for M-sigma and 0.30 +- 0.01 for M-L_K, p. 566, and 0.28 without an
+                 uncertainty for M-M_bulge, eq. 10);
                  the mass normalisation keeps 0.2.
     "fitwidths"  as "unwidened" with 0.05 on the mass normalisation as well (its uncertainty in
                  Kormendy and Ho 2013) and 0.05 on the scatter; "kh" the same centred on their 8.69.
