@@ -44,8 +44,19 @@ KH_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.69, 0.05), mmb_scatter_
 # 0.05 as in holodeck's strong-prior set. The slope stays at the library's 1.10 (Kormendy and Ho: 1.17).
 LITERATURE_GAUSSIAN = {"gsmf_phi0_log10": (-2.61, 0.10), "gsmf_mchar0_log10": (10.96, 0.11),
                        "mmb_mamp_log10": (8.69, 0.05), "mmb_scatter_dex": (0.28, 0.05)}
+# "recent": post-2014 measurements in the same parametrisation (19 Oct 2026). Mass function: global fit of
+# psi0 and m_psi0 (redshift slopes and low-mass slope held at the library's values, residuals weighted by
+# Psi m^1.83, the weight of a galaxy in h_c^2) to six Eddington-corrected, Chabrier-mass determinations
+# (Davidzon+17, COSMOS2020/Weaver+23, McLeod+21, Leja+20, Wright+18, GAMA/Driver+22), centre the mean and
+# width the scatter between them. Black hole relation: Kormendy and Ho 2013 and Sahu+19 brought to Chabrier
+# bulge masses (8.80, width covering the mass-definition systematic), scatter 0.40 from Sahu+19 and
+# Saglia+16. The widths are not smaller than the literature-width set: the spread between surveys has
+# replaced the statistical error of a single one.
+RECENT_GAUSSIAN = {"gsmf_phi0_log10": (-2.20, 0.15), "gsmf_mchar0_log10": (10.82, 0.11),
+                   "mmb_mamp_log10": (8.80, 0.10), "mmb_scatter_dex": (0.40, 0.05)}
 GAUSSIAN_SETS = {"nanograv": NANOGRAV_GAUSSIAN, "unwidened": UNWIDENED_GAUSSIAN,
-                 "fitwidths": FITWIDTHS_GAUSSIAN, "kh": KH_GAUSSIAN, "literature": LITERATURE_GAUSSIAN}
+                 "fitwidths": FITWIDTHS_GAUSSIAN, "kh": KH_GAUSSIAN, "literature": LITERATURE_GAUSSIAN,
+                 "recent": RECENT_GAUSSIAN}
 _LO = np.array([PRIOR_BOX[k][0] for k in PARAM_NAMES])
 _HI = np.array([PRIOR_BOX[k][1] for k in PARAM_NAMES])
 
