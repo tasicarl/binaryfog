@@ -36,8 +36,16 @@ UNWIDENED_GAUSSIAN = {"gsmf_phi0_log10": (-2.56, 0.10), "gsmf_mchar0_log10": (10
 # (0.02 is that of their K-band luminosity relation), and holodeck's strong-prior set uses 0.28 +- 0.05
 FITWIDTHS_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.60, 0.05), mmb_scatter_dex=(0.32, 0.05))
 KH_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.69, 0.05), mmb_scatter_dex=(0.32, 0.05))
+# "literature": centres and widths taken from the sources NANOGrav cite, each from one source.
+# Mass function: the linear-in-redshift fit of the single-Schechter parameters of Tomczak et al. 2014,
+# table 3, total sample (all eight redshift bins; holodeck's own fit took two bins from the star-forming
+# block), intercepts at z = 0. Black hole to bulge relation: Kormendy and Ho 2013, eq. 10, p. 571:
+# normalisation 8.69 +- 0.05 and intrinsic scatter 0.28 dex, which they quote without an uncertainty, so
+# 0.05 as in holodeck's strong-prior set. The slope stays at the library's 1.10 (Kormendy and Ho: 1.17).
+LITERATURE_GAUSSIAN = {"gsmf_phi0_log10": (-2.61, 0.10), "gsmf_mchar0_log10": (10.96, 0.11),
+                       "mmb_mamp_log10": (8.69, 0.05), "mmb_scatter_dex": (0.28, 0.05)}
 GAUSSIAN_SETS = {"nanograv": NANOGRAV_GAUSSIAN, "unwidened": UNWIDENED_GAUSSIAN,
-                 "fitwidths": FITWIDTHS_GAUSSIAN, "kh": KH_GAUSSIAN}
+                 "fitwidths": FITWIDTHS_GAUSSIAN, "kh": KH_GAUSSIAN, "literature": LITERATURE_GAUSSIAN}
 _LO = np.array([PRIOR_BOX[k][0] for k in PARAM_NAMES])
 _HI = np.array([PRIOR_BOX[k][1] for k in PARAM_NAMES])
 
