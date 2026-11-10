@@ -165,8 +165,12 @@ on top of the six astrophysical ones:
   it. The 2024 products carry a grid running far below the range the Markov chains visited, where
   the stored density is a numerical floor with isolated single-sample spikes that a profile
   likelihood can find; the 2026 products keep only the sampled range.
-* **The priors** on the astrophysical parameters are flat over the library box or the Gaussians of
-  arXiv:2306.16220. Limits should be quoted for more than one of them.
+* **The priors** on the astrophysical parameters are the four sets of the paper, chosen with
+  `astro_prior`: `"flat"` (the library box), `"nanograv"` (the Gaussians of arXiv:2306.16220),
+  `"tomczak_kormendy"` (the centres and uncertainties of the fits those Gaussians derive from) and
+  `"survey_average"` (the spread of mass-function measurements published since 2014). Limits should
+  be quoted for more than one of them. For the cross-check with the `(A, gamma)` power law,
+  `bf.ln_prior_agamma` is NANOGrav's Gaussian on its amplitude and slope, passed as `nuisance_prior`.
 
 ## Tests
 
@@ -203,6 +207,11 @@ the research scripts it was extracted from, and skips itself outside that reposi
   parameter gives Z = sqrt(2 G); `sided="two"` gives the two-sided convention of Macias et al. 2018.
   A difference between two fits converted the same way is insensitive to this; an absolute
   significance is not.
+* A profile over many parameters can have more than one local maximum at a grid point, and the
+  neighbour sweeps cannot repair a point whose neighbours sit in the lower one too. For a phase
+  transition with the six astrophysical parameters free, one point needed 24 restarts to find the
+  higher maximum, which lies 0.5 above the lower in ln L. Rerun isolated low points with more
+  restarts before reading a contour off a scan.
 
 ## Citing
 

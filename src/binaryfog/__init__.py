@@ -31,7 +31,8 @@ from .freespec import FreeSpectrum
 from .likelihood import Likelihood, quantile_spectrum
 from .models import (PTArcadeModel, Sum, broken_power_law, load_ptarcade, power_law,
                      smbhb_power_law)
-from .priors import AGAMMA_COV, AGAMMA_MU, NANOGRAV_GAUSSIAN, ln_prior, ln_prior_agamma
+from .priors import (AGAMMA_COV, AGAMMA_MU, NANOGRAV_GAUSSIAN, SURVEY_AVERAGE_GAUSSIAN,
+                     TOMCZAK_KORMENDY_GAUSSIAN, ln_prior, ln_prior_agamma)
 from .profile import LEVELS_1D, LEVELS_2D, ProfileScan, preference, reference_lnL, region
 from .significance import sigma_from_gain
 
@@ -40,7 +41,8 @@ __all__ = ["Background", "BackgroundExtended", "FreeSpectrum", "Likelihood", "Pr
            "PARAM_NAMES", "PRIOR_BOX", "PARAM_NAMES8", "PRIOR_BOX8", "NANOGRAV_FIXED",
            "PTArcadeModel", "load_ptarcade", "power_law", "smbhb_power_law",
            "broken_power_law", "Sum",
-           "NANOGRAV_GAUSSIAN", "ln_prior", "ln_prior_agamma", "AGAMMA_MU", "AGAMMA_COV",
+           "NANOGRAV_GAUSSIAN", "TOMCZAK_KORMENDY_GAUSSIAN", "SURVEY_AVERAGE_GAUSSIAN",
+           "ln_prior", "ln_prior_agamma", "AGAMMA_MU", "AGAMMA_COV",
            "region", "preference", "reference_lnL", "quantile_spectrum",
            "bend_log10hc2", "hc2_to_h2omega", "LEVELS_1D", "LEVELS_2D", "sigma_from_gain",
            "__version__"]

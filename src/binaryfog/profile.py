@@ -258,7 +258,17 @@ class ProfileScan:
                 break
         return rows
 
-    def run(self, jobs=1, progress=True):
+    def run(self, jobs=1):
+        """Profile the likelihood at every point of the scan grid, the product of the values given for each
+        scanned parameter. Each point is maximised over the nuisance parameters and, with a background, over
+        the astrophysical parameters, from `restarts` starting points; then `sweeps` passes restart every
+        point from its best neighbour's maximum, which removes isolated points left in a lower local maximum.
+
+        jobs > 1 spreads the points over that many processes. Returns a pandas DataFrame (a list of dicts if
+        pandas is missing) with one row per grid point: the scanned values, lnL (data plus log prior), its
+        data and prior parts, and the parameters at the maximum. Points where the model cannot be evaluated
+        get lnL = -inf and are counted in a note.
+        """
         names = list(self.scan)
         points = [dict(zip(names, v)) for v in itertools.product(*(self.scan[n] for n in names))]
         jobs_list = list(enumerate(points))

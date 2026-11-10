@@ -1,26 +1,23 @@
 """
-Prior sets for the six background parameters.
+Prior sets for the six background parameters, as in table 1 of the paper.
 
-    "uniform"    flat over the library box: what the data alone can do, the bracket.
-    "nanograv"   the astrophysical priors of arXiv:2306.16220: Gaussians on the galaxy stellar
-                 mass function normalisation and characteristic mass and on the black-hole to
-                 bulge-mass relation, flat on the binary lifetime and the inner hardening index.
-                 Their widths are four times the standard deviation of a fit to the galaxy data of
-                 Tomczak et al. (2014); the paper gives no reason for the factor.
-    "unwidened"  the same Gaussians at the widths of the underlying fits: 0.1 on the mass-function
-                 normalisation and characteristic mass (holodeck's linear-in-z fit to Tomczak et al. 2014,
-                 table 3, without the factor four) and 0.02 dex on the scatter (Kormendy and Ho 2013
-                 quote 0.29 +- 0.02 for M-sigma and 0.30 +- 0.01 for M-L_K, p. 566, and 0.28 without an
-                 uncertainty for M-M_bulge, eq. 10);
-                 the mass normalisation keeps 0.2.
-    "fitwidths"  as "unwidened" with 0.05 on the mass normalisation as well (its uncertainty in
-                 Kormendy and Ho 2013) and 0.05 on the scatter; "kh" the same centred on their 8.69.
-    None         no prior term at all, for a pure profile likelihood over the background.
+    "flat"              uniform over the library box: what the data alone can do. None means the same.
+    "nanograv"          the priors of NANOGrav's holodeck library (arXiv:2306.16220): Gaussians on the
+                        normalisation and characteristic mass of the galaxy stellar mass function and on the
+                        normalisation and scatter of the black-hole to bulge-mass relation. The mass-function
+                        widths are four times those of the fits to Tomczak et al. (2014) they derive from.
+    "tomczak_kormendy"  the centres and uncertainties of the fits these priors are based on: the single-Schechter
+                        parameters of the total galaxy sample of Tomczak et al. (2014, table 3), fitted linearly in
+                        redshift, and the black-hole to bulge-mass relation of Kormendy and Ho (2013, eq. 10).
+    "survey_average"    the centre and spread of six mass-function measurements published since 2014, and the
+                        black-hole to bulge-mass relation brought to the same (Chabrier) stellar-mass convention.
 
-A third set, the present-day measurements with their own much smaller widths, needs a library built
-on the double-Schechter mass function and the Illustris merger rate and is not available yet.
+In every set the binary lifetime and the inner hardening index are flat over the box. Every set enforces the
+box, outside which the fitted maps are extrapolation.
 
-Every set enforces the box, outside which the fitted maps are extrapolation.
+For the cross-check with the (A, gamma) power-law description of the binaries, ln_prior_agamma is NANOGrav's
+two-dimensional Gaussian on its amplitude and slope (AGAMMA_MU, AGAMMA_COV), passed to a ProfileScan as
+nuisance_prior rather than as astro_prior.
 """
 import numpy as np
 
@@ -28,35 +25,21 @@ from .background import PARAM_NAMES, PRIOR_BOX
 
 NANOGRAV_GAUSSIAN = {"gsmf_phi0_log10": (-2.56, 0.40), "gsmf_mchar0_log10": (10.90, 0.40),
                      "mmb_mamp_log10": (8.60, 0.20), "mmb_scatter_dex": (0.32, 0.15)}
-UNWIDENED_GAUSSIAN = {"gsmf_phi0_log10": (-2.56, 0.10), "gsmf_mchar0_log10": (10.90, 0.10),
-                      "mmb_mamp_log10": (8.60, 0.20), "mmb_scatter_dex": (0.32, 0.02)}
-# all four at the widths of the underlying fits, the mass normalisation included (0.05 on the
-# normalisation of Kormendy and Ho 2013), centred once at holodeck's 8.60 and once at their 8.69
-# eps_mu takes 0.05 here: Kormendy and Ho quote no uncertainty on the scatter of the mass relation
-# (0.02 is that of their K-band luminosity relation), and holodeck's strong-prior set uses 0.28 +- 0.05
-FITWIDTHS_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.60, 0.05), mmb_scatter_dex=(0.32, 0.05))
-KH_GAUSSIAN = dict(UNWIDENED_GAUSSIAN, mmb_mamp_log10=(8.69, 0.05), mmb_scatter_dex=(0.32, 0.05))
-# "literature": centres and widths taken from the sources NANOGrav cite, each from one source.
-# Mass function: the linear-in-redshift fit of the single-Schechter parameters of Tomczak et al. 2014,
-# table 3, total sample (all eight redshift bins; holodeck's own fit took two bins from the star-forming
-# block), intercepts at z = 0. Black hole to bulge relation: Kormendy and Ho 2013, eq. 10, p. 571:
-# normalisation 8.69 +- 0.05 and intrinsic scatter 0.28 dex, which they quote without an uncertainty, so
-# 0.05 as in holodeck's strong-prior set. The slope stays at the library's 1.10 (Kormendy and Ho: 1.17).
-LITERATURE_GAUSSIAN = {"gsmf_phi0_log10": (-2.61, 0.10), "gsmf_mchar0_log10": (10.96, 0.11),
-                       "mmb_mamp_log10": (8.69, 0.05), "mmb_scatter_dex": (0.28, 0.05)}
-# "recent": post-2014 measurements in the same parametrisation (19 Oct 2026). Mass function: global fit of
-# psi0 and m_psi0 (redshift slopes and low-mass slope held at the library's values, residuals weighted by
-# Psi m^1.83, the weight of a galaxy in h_c^2) to six Eddington-corrected, Chabrier-mass determinations
-# (Davidzon+17, COSMOS2020/Weaver+23, McLeod+21, Leja+20, Wright+18, GAMA/Driver+22), centre the mean and
-# width the scatter between them. Black hole relation: Kormendy and Ho 2013 and Sahu+19 brought to Chabrier
-# bulge masses (8.80, width covering the mass-definition systematic), scatter 0.40 from Sahu+19 and
-# Saglia+16. The widths are not smaller than the literature-width set: the spread between surveys has
-# replaced the statistical error of a single one.
-RECENT_GAUSSIAN = {"gsmf_phi0_log10": (-2.20, 0.15), "gsmf_mchar0_log10": (10.82, 0.11),
-                   "mmb_mamp_log10": (8.80, 0.10), "mmb_scatter_dex": (0.40, 0.05)}
-GAUSSIAN_SETS = {"nanograv": NANOGRAV_GAUSSIAN, "unwidened": UNWIDENED_GAUSSIAN,
-                 "fitwidths": FITWIDTHS_GAUSSIAN, "kh": KH_GAUSSIAN, "literature": LITERATURE_GAUSSIAN,
-                 "recent": RECENT_GAUSSIAN}
+# Mass function: linear-in-redshift fit to the single-Schechter parameters of the total sample in table 3 of
+# Tomczak et al. 2014 (all eight redshift bins), intercepts at z = 0. Black hole to bulge mass: Kormendy and
+# Ho 2013, eq. 10, normalisation 8.69 +- 0.05 and intrinsic scatter 0.28 dex; they quote no uncertainty on
+# the scatter, so it takes 0.05.
+TOMCZAK_KORMENDY_GAUSSIAN = {"gsmf_phi0_log10": (-2.61, 0.10), "gsmf_mchar0_log10": (10.96, 0.11),
+                             "mmb_mamp_log10": (8.69, 0.05), "mmb_scatter_dex": (0.28, 0.05)}
+# Mass function: psi0 and m_psi0 fitted to six Eddington-corrected determinations with Chabrier stellar masses
+# (Davidzon et al. 2017, Weaver et al. 2023, McLeod et al. 2021, Leja et al. 2020, Wright et al. 2018, Driver
+# et al. 2022), with the redshift slopes and the low-mass slope held at the library's values; centre the mean,
+# width the spread between them. Black hole to bulge mass: Kormendy and Ho 2013 and Sahu et al. 2019 brought
+# to Chabrier bulge masses, scatter from Sahu et al. 2019 and Saglia et al. 2016.
+SURVEY_AVERAGE_GAUSSIAN = {"gsmf_phi0_log10": (-2.20, 0.15), "gsmf_mchar0_log10": (10.82, 0.11),
+                           "mmb_mamp_log10": (8.80, 0.10), "mmb_scatter_dex": (0.40, 0.05)}
+GAUSSIAN_SETS = {"nanograv": NANOGRAV_GAUSSIAN, "tomczak_kormendy": TOMCZAK_KORMENDY_GAUSSIAN,
+                 "survey_average": SURVEY_AVERAGE_GAUSSIAN}
 _LO = np.array([PRIOR_BOX[k][0] for k in PARAM_NAMES])
 _HI = np.array([PRIOR_BOX[k][1] for k in PARAM_NAMES])
 
@@ -103,10 +86,10 @@ def ln_prior(theta, which="nanograv", names=None, box=None):
     th = np.asarray(theta, float)
     if np.any(th < lo) or np.any(th > hi):
         return -np.inf
-    if which in (None, "uniform", "none"):
+    if which in (None, "flat"):
         return 0.0
     if which not in GAUSSIAN_SETS:
-        raise ValueError(f"unknown prior set {which!r}; available: 'uniform', "
+        raise ValueError(f"unknown prior set {which!r}; available: 'flat', "
                          f"{', '.join(repr(k) for k in GAUSSIAN_SETS)}, None")
     gauss = GAUSSIAN_SETS[which]
     lp = 0.0
@@ -128,7 +111,7 @@ def start_points(rng, n, which="nanograv", names=None, box=None):
                         else 0.5 * (box[k][0] + box[k][1]) for k in names])
     scale = np.array([gauss[k][1] if k in gauss
                       else 0.25 * (box[k][1] - box[k][0]) for k in names])
-    if which in (None, "uniform", "none"):
+    if which in (None, "flat"):
         scale = scale * 2.0
     out = centres + rng.normal(0.0, scale, size=(n, len(names)))
     return np.clip(out, lo, hi)

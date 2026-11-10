@@ -26,10 +26,11 @@ Parameters, in the order of PARAM_NAMES, with the uniform prior box of arXiv:230
     hard_gamma_inner    inner hardening index nu_inner, dimensionless
 
 The maps were fitted to a library of 2000 holodeck models with 2000 realisations each, built with
-holodeck at commit ca79e282 (the classic phenomenological parameter space). Accuracy against the
-library, for models within 1 of the signal level: 0.06 to 0.11 dex on the median (a third of the
-realisation width), 5 per cent on the width, 0.01 on the skew; in ln L of the NANOGrav free spectrum
-about 0.5 rms near the best fits. The IPTA DR2 maps (maps="ipta2"), fitted the same way to the same
+holodeck at commit ca79e282 (the classic phenomenological parameter space). Accuracy on 150 library
+models held out of the fit, typical (worst tenth): 0.05 dex (0.15 dex) on the median, 4 (15) per cent
+on the width, 0.05 (0.17) on the skew. In ln L of the NANOGrav free spectrum the surrogate differs from
+each held-out model's own realisations by -1.2 to +1.3 (16 to 84 per cent); a contour or a preference
+sees only the part of that error which varies across a scan. The IPTA DR2 maps (maps="ipta2"), fitted the same way to the same
 models on the 30 IPTA bins, are accurate to 0.10 to 0.15 dex on the median in the 13 lowest bins and
 to about 0.5 rms in ln L of the IPTA free spectrum; in the lowest bin, 1.05 nHz, the error of the median
 reaches a few realisation widths for quiet populations.
