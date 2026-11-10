@@ -39,7 +39,7 @@ Repository = "https://github.com/tasicarl/binaryfog"
 where = ["src"]
 
 [tool.setuptools.package-data]
-binaryfog = ["data/*.npz", "data/*.npy"]
+binaryfog = ["data/*.npz", "data/*.npy", "data/ipta2/*.npz"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
