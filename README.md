@@ -157,6 +157,7 @@ on top of the six astrophysical ones:
   the half-width to 4 per cent and the skew to 0.05 for a typical model, and to 0.15 dex, 15 per
   cent and 0.17 for the worst tenth of them. Evaluating it takes 0.18 milliseconds against the
   180 seconds holodeck needs for the same thing.
+  The library and the fit can be redone with the scripts in `training/`.
 * **The realisation distribution** is neither log-normal nor Gaussian. `binaryfog` uses the warp
   `log10 h_c^2 = median + sigma (z + c z^2)` with `z` normal, which beats a log-normal by 74 per
   cent in mean quantile-ladder error.
@@ -191,8 +192,8 @@ the research scripts it was extracted from, and skips itself outside that reposi
 ## Limits of this version
 
 * The six-parameter maps cover the NANOGrav 15 yr band, 1.98 to 27.7 nHz. Another array needs its
-  own library; the builder that produces the NANOGrav and IPTA DR2 grids from one holodeck call is
-  in the research repository, and the extended maps carry both. Mind that a data product defines
+  own library. `training/` holds the scripts that build one from public holodeck and fit the maps
+  to it (see `training/README.md`); `Background(maps="maps.npz")` then loads the result. Mind that a data product defines
   its own frequencies: the IPTA DR2 free spectrum is not a set of harmonics of its time span, its
   bins starting at 1.0496 nHz and spaced by 1.0858 nHz, and `Likelihood` therefore evaluates the
   background on the frequencies stored with the data.

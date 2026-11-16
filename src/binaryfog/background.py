@@ -26,8 +26,9 @@ Parameters, in the order of PARAM_NAMES, with the uniform prior box of arXiv:230
     hard_gamma_inner    inner hardening index nu_inner, dimensionless
 
 The maps were fitted to a library of 2000 holodeck models with 2000 realisations each, built with
-holodeck at commit ca79e282 (the classic phenomenological parameter space). Accuracy on 150 library
-models held out of the fit, typical (worst tenth): 0.05 dex (0.15 dex) on the median, 4 (15) per cent
+holodeck at commit 44fe3085 (the classic phenomenological parameter space); the public release
+v1.7.1 with training/build_library.py builds the same library up to the draw noise of the
+realisations. Accuracy on 150 library models held out of the fit, typical (worst tenth): 0.05 dex (0.15 dex) on the median, 4 (15) per cent
 on the width, 0.05 (0.17) on the skew. In ln L of the NANOGrav free spectrum the surrogate differs from
 each held-out model's own realisations by -1.2 to +1.3 (16 to 84 per cent); a contour or a preference
 sees only the part of that error which varies across a scan. The IPTA DR2 maps (maps="ipta2"), fitted the same way to the same
@@ -130,8 +131,9 @@ class Background:
 
     The default maps were fitted on the NANOGrav 15 yr bins, f_i = i / 16.03 yr for i = 1 ... 14.
     maps="ipta2" selects the maps fitted in the same way to the same 2000 holodeck models on the 30
-    bins of IPTA DR2, 1.0496 nHz + n x 1.0858 nHz (data/ipta2/maps6.npz). Frequencies that are bins
-    of the chosen grid take the per-bin values exactly; other frequencies inside its range are
+    bins of IPTA DR2, 1.0496 nHz + n x 1.0858 nHz. The maps of a grid are data/maps_<grid>.npz;
+    maps="path/to/maps.npz" loads maps fitted to another library or grid by training/fit_maps.py.
+    Frequencies that are bins of the chosen grid take the per-bin values exactly; other frequencies inside its range are
     interpolated and are accurate to the same degree; outside it the maps are extrapolation and are
     refused, unless `extrapolate` is set, which allows a factor of two beyond each end and is meant
     for drawing a continuous curve rather than for a fit.
@@ -143,33 +145,22 @@ class Background:
 
     def __init__(self, freqs_Hz=None, extrapolate=False, maps="ng15"):
         self.maps = maps
-        if maps == "ng15":
-            b = np.load(DATA / "bend_map_final.npz", allow_pickle=True)
-            m = np.load(DATA / "median_merged.npz", allow_pickle=True)
-            w = np.load(DATA / "width_map.npz", allow_pickle=True)
-            s = np.load(DATA / "skew_map.npz", allow_pickle=True)
-            self._W_bend = b["W"]
-            self._W_med, self._deg_med = m["W"], int(m["degree"])
-            self._W_wid, self._deg_wid = w["W"], int(w["degree"])
-            self._W_skew, self._deg_skew = s["W"], int(s["degree"])
-            self._wscale = float(np.load(DATA / "width_scale.npy")[0])
-            self._fgrid = self.F_NG15
-        else:
-            path = DATA / maps / "maps6.npz"
-            if not path.is_file():
-                raise FileNotFoundError(f"no maps for the grid {maps!r} at {path}")
-            m = np.load(path, allow_pickle=True)
-            self._W_bend = m["W_bend"]
-            self._W_med, self._deg_med = m["W_med"], int(m["deg_med"])
-            self._W_wid, self._deg_wid = m["W_wid"], int(m["deg_wid"])
-            self._W_skew, self._deg_skew = m["W_skew"], int(m["deg_skew"])
-            self._wscale = float(m["width_scale"])
-            self._fgrid = np.asarray(m["freqs"], float)
+        path = Path(maps) if str(maps).endswith(".npz") else DATA / f"maps_{maps}.npz"
+        if not path.is_file():
+            raise FileNotFoundError(f"no maps {maps!r} at {path}; shipped: "
+                                    f"{', '.join(sorted(q.stem[5:] for q in DATA.glob('maps_*.npz')))}")
+        m = np.load(path, allow_pickle=True)
+        self._W_bend = m["W_bend"]
+        self._W_med, self._deg_med = m["W_med"], int(m["deg_med"])
+        self._W_wid, self._deg_wid = m["W_wid"], int(m["deg_wid"])
+        self._W_skew, self._deg_skew = m["W_skew"], int(m["deg_skew"])
+        self._wscale = float(m["width_scale"])
+        self._fgrid = np.asarray(m["freqs"], float)
         self.freqs = np.asarray(self._fgrid if freqs_Hz is None else freqs_Hz, float)
         lo, hi = (0.5, 2.0) if extrapolate else (0.98, 1.02)
         if self.freqs.min() < lo * self._fgrid[0] or self.freqs.max() > hi * self._fgrid[-1]:
             raise ValueError(f"the {maps} maps cover {self._fgrid[0]*1e9:.2f} to {self._fgrid[-1]*1e9:.1f} nHz; "
-                             "other bands need their own library (see build_library6_ipta.py). Pass "
+                             "other bands need their own library (see training/ in the repository). Pass "
                              "extrapolate=True to go a factor of two beyond each end for plotting.")
         self.extrapolated = bool(extrapolate)
         # frequencies that are bins of the fitted grid (to the sixth digit, which is how far the data

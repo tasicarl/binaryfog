@@ -36,7 +36,7 @@ def test_frequencies_between_the_bins_are_interpolated():
     assert np.all(np.isfinite(sig))
 
 
-@pytest.mark.skipif(not (DATA / "ipta2" / "maps6.npz").is_file(), reason="no IPTA DR2 maps")
+@pytest.mark.skipif(not (DATA / "maps_ipta2.npz").is_file(), reason="no IPTA DR2 maps")
 def test_the_ipta_maps_cover_their_band_and_refuse_beyond():
     bg = bf.Background(maps="ipta2")
     assert len(bg.freqs) == 30 and bg.freqs[0] < 1.1e-9
