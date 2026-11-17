@@ -111,7 +111,7 @@ def _interp_logf(lg, lgb, v):
     in a spectrum drawn on a grid finer than the bins. A low-order polynomial in log frequency is
     fitted through them instead, which is smooth by construction and extends past the band without
     any special case. Over the fourteen NANOGrav bins a cubic reproduces the median correction to
-    at most 0.014 in log10 h_c^2, three per cent, against the 0.049 the surrogate itself is
+    at most 0.014 in log10 h_c^2, three per cent, against the 0.05 the surrogate itself is
     accurate to and the several tenths of a dex the measured posterior spans in every bin.
 
     This is only ever used off the fitted grid, that is for drawing. A likelihood runs on the

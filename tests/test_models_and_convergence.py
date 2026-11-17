@@ -185,6 +185,23 @@ def test_nuisance_prior_pulls_the_power_law_to_its_centre():
     assert -17.0 < float(table["log10_A"][0]) < -14.0
 
 
+@needs_data
+def test_objective_adds_the_nuisance_prior_to_the_background_prior():
+    """With a background and a nuisance prior together, the objective is the sum of both priors and ln L."""
+    import binaryfog as bf
+    data = bf.FreeSpectrum.load("ng15_hd_v2", root=LOCAL_DATA)
+    like = bf.Likelihood(data, bf.Background())
+    nprior = lambda v: bf.ln_prior_agamma({"smbhb_log10_A": v["smbhb_log10_A"], "smbhb_gamma": 13 / 3})
+    scan = bf.ProfileScan(like, bf.Sum(bf.smbhb_power_law), scan={"smbhb_gamma": [13 / 3]},
+                          nuisance={"smbhb_log10_A": (-16.0, -14.0, "linear")},
+                          nuisance_prior=nprior, astro_prior="nanograv")
+    u = np.full(1 + len(bf.PARAM_NAMES), 0.5)
+    vals, theta = scan._unpack(scan._from_cube(u))
+    spec = scan._spec({"smbhb_gamma": 13 / 3, **vals})
+    expected = like.ln_like(spec, theta) + bf.ln_prior(theta, "nanograv") + nprior(vals)
+    assert np.isclose(-scan._neg(u, {"smbhb_gamma": 13 / 3}), expected, rtol=0, atol=1e-12)
+
+
 @needs_models
 @needs_data
 @pytest.mark.xfail(reason="the second grid point has two local maxima 0.5 apart in ln L and its neighbours sit in "

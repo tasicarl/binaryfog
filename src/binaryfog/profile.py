@@ -7,7 +7,7 @@ back is a table with the maximum and the parameters that achieved it, which is w
 and the limits are drawn from.
 
     scan = ProfileScan(like, spectrum, scan={"alpha": ..., "betaH": ...},
-                       nuisance={"Treh": (1e-3, 1.0, "log")}, astro_prior="nanograv")
+                       nuisance={"Treh": (1e-3, 10.0, "log")}, astro_prior="nanograv")
     table = scan.run(jobs=28)
 
 Thresholds for the regions, from Wilks' theorem, at one and two standard deviations (68.3 and 95.4
@@ -118,7 +118,7 @@ class ProfileScan:
             if not np.isfinite(lp):
                 return 1e6
         if theta is not None:
-            lp = ln_prior(theta, self.astro_prior, self.theta_names, self.theta_box)
+            lp += ln_prior(theta, self.astro_prior, self.theta_names, self.theta_box)
             if not np.isfinite(lp):
                 return 1e6
         v = self.like.ln_like(spec, theta) + lp
@@ -347,18 +347,8 @@ def preference(table, like, theta_grid=None):
     """How much the best fit gains over the binaries alone, in ln L units.
 
     Without new physics the model is the background by itself, maximised over its parameters; the
-    gain is the number to quote for "is the new physics preferred", and p = exp(-gain) with two
-    scanned parameters turns it into a significance.
+    gain is the number to quote for "is the new physics preferred"; sigma_from_gain turns it into a
+    significance. theta_grid names the prior set of the background (default: nanograv).
     """
-    from .priors import start_points
-    names = list(like.background.param_names)
-    box = dict(like.background.prior_box)
     which = "nanograv" if theta_grid is None else theta_grid
-    rng = np.random.default_rng(0)
-    best = -np.inf
-    for th in start_points(rng, 12, which, names, box):
-        r = optimize.minimize(
-            lambda t: -(like.ln_like(None, t) + ln_prior(t, which, names, box)), th,
-            method="Nelder-Mead", options={"maxiter": 4000})
-        best = max(best, -r.fun)
-    return float(table["lnL"].max() - best)
+    return float(table["lnL"].max() - preference_reference(like, which, restarts=12))

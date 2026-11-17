@@ -41,7 +41,7 @@ def sigma_from_gain(gain, ndof, boundary=True, sided="one"):
     """Standard deviations from the gain in ln L of a model with `ndof` free parameters.
 
     sided "one" (default): Z = Phi^-1(1 - p), as in Cowan et al.; "two": Z = Phi^-1(1 - p/2), as in
-    Macias et al. (the convention of binaryfog up to version 0.1.0)."""
+    Macias et al."""
     if sided not in ("one", "two"):
         raise ValueError(f"sided must be 'one' or 'two', not {sided!r}")
     p = stats.chi2.sf(2.0 * max(float(gain), 0.0), int(ndof))

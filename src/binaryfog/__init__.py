@@ -26,7 +26,6 @@ Conventions: spectra are h^2 Omega_GW(f) with f in Hz; the six background parame
 the classic phenomenological holodeck space, in the order of bf.PARAM_NAMES.
 """
 from .background import PARAM_NAMES, PRIOR_BOX, Background, bend_log10hc2, hc2_to_h2omega
-from .background8 import NANOGRAV_FIXED, PARAM_NAMES8, PRIOR_BOX8, BackgroundExtended
 from .freespec import FreeSpectrum
 from .likelihood import Likelihood, quantile_spectrum
 from .models import (PTArcadeModel, Sum, broken_power_law, load_ptarcade, power_law,
@@ -37,8 +36,8 @@ from .profile import LEVELS_1D, LEVELS_2D, ProfileScan, preference, reference_ln
 from .significance import sigma_from_gain
 
 __version__ = "0.1.0"
-__all__ = ["Background", "BackgroundExtended", "FreeSpectrum", "Likelihood", "ProfileScan",
-           "PARAM_NAMES", "PRIOR_BOX", "PARAM_NAMES8", "PRIOR_BOX8", "NANOGRAV_FIXED",
+__all__ = ["Background", "FreeSpectrum", "Likelihood", "ProfileScan",
+           "PARAM_NAMES", "PRIOR_BOX",
            "PTArcadeModel", "load_ptarcade", "power_law", "smbhb_power_law",
            "broken_power_law", "Sum",
            "NANOGRAV_GAUSSIAN", "TOMCZAK_KORMENDY_GAUSSIAN", "SURVEY_AVERAGE_GAUSSIAN",

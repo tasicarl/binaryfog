@@ -102,22 +102,6 @@ population = bf.Likelihood(data, bf.Background())                  # this packag
 `bf.reference_lnL` gives the best fit without the new physics for any of them, which is what turns
 a scan into a statement about whether the source is preferred.
 
-The two hardening parameters NANOGrav hold fixed, the outer index and the break separation of the
-hardening rate, have no microphysical counterpart. `BackgroundExtended` frees them and can hold any
-of the eight parameters fixed, so a limit can be quoted with the break at NANOGrav's 100 pc, at
-holodeck's 10 pc, or profiled over:
-
-```python
-bf.BackgroundExtended(fixed=bf.NANOGRAV_FIXED)              # as NANOGrav fix them
-bf.BackgroundExtended(fixed={"log10_rchar_pc": 1.0})        # break at 10 pc
-bf.BackgroundExtended()                                     # break and outer index free
-```
-
-Beware one corner of that box: with a steep outer index and a small break separation the
-fixed-lifetime normalisation makes the sub-parsec hardening so fast that the band empties, and the
-fit can switch the binaries off without touching a galaxy parameter. Two of every five models with
-an outer index above 1.5 and a break below 20 pc have no background left.
-
 ## Inside someone else's sampler
 
 The common case is a Markov chain over the parameters of a new-physics model, in which the six
@@ -172,6 +156,12 @@ on top of the six astrophysical ones:
   `"survey_average"` (the spread of mass-function measurements published since 2014). Limits should
   be quoted for more than one of them. For the cross-check with the `(A, gamma)` power law,
   `bf.ln_prior_agamma` is NANOGrav's Gaussian on its amplitude and slope, passed as `nuisance_prior`.
+
+## Reproducing the paper
+
+`paper/` holds the scripts that produce every figure and number of the paper, together with their inputs:
+the holodeck library, the free-spectrum grids and the stored scan outputs. `paper/run_figures.sh` rebuilds the
+figures and numbers from those inputs, `paper/run_scans.sh` reruns the scans; see `paper/README.md`.
 
 ## Tests
 

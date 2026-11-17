@@ -46,9 +46,7 @@ _HI = np.array([PRIOR_BOX[k][1] for k in PARAM_NAMES])
 
 # The two-dimensional Gaussian that NANOGrav put on the power-law background in their new-physics
 # search, arXiv:2306.16219 eq. (A1): a fit of power laws to the 14 lowest bins of their GW-only
-# holodeck library. Note that the reproduction kit of arXiv:2602.09092 carries an off-diagonal
-# element of -0.03 where the paper and PTArcade have 10^-1 x (-0.026); the published value is used
-# here.
+# holodeck library.
 AGAMMA_MU = np.array([-15.61492963, 4.70709637])
 AGAMMA_COV = np.array([[0.27871359, -0.00263617], [-0.00263617, 0.12415383]])
 _AGAMMA_ICOV = np.linalg.inv(AGAMMA_COV)

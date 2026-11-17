@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,17 +8,15 @@ version = "0.1.0"
 description = "The supermassive black hole binary background as a nuisance in pulsar timing array searches for new physics"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     {name = "Carlo Tasillo", email = "carlo.tasillo@ific.uv.es"},
-    {name = "Torsten Bringmann", email = "torsten.bringmann@fys.uio.no"},
-    {name = "Chris Gordon", email = "chris.gordon@canterbury.ac.nz"},
 ]
 keywords = ["pulsar timing arrays", "gravitational waves", "supermassive black hole binaries"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering :: Astronomy",
     "Topic :: Scientific/Engineering :: Physics",

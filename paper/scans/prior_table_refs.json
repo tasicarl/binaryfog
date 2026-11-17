@@ -1,0 +1,20 @@
+{
+ "ng15_cp_v2": {
+  "power law": -5.159060619440622,
+  "nanograv": -1.372737628753141,
+  "tomczak_kormendy": -6.507948175502849,
+  "survey_average": -1.8106388795115054
+ },
+ "ng15_hd_v2": {
+  "power law": -5.811791517459884,
+  "nanograv": -1.6949291139185798,
+  "tomczak_kormendy": -6.048900436857631,
+  "survey_average": -1.9460654829434236
+ },
+ "ng15_hdall_v2": {
+  "power law": -5.3010567324283375,
+  "nanograv": -3.6267976865847635,
+  "tomczak_kormendy": -4.659049418807319,
+  "survey_average": -3.2578619159324624
+ }
+}

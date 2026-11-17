@@ -1,0 +1,5 @@
+# Written by run_figures.sh; everything in inputs/ and scans/ is tracked.
+logs/
+plots/
+results/
+__pycache__/

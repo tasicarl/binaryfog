@@ -13,8 +13,7 @@ with NP_i the deterministic new-physics contribution and p(B_i | theta) the real
 distribution predicted by the surrogate. The integral is done on a fixed Gauss-Hermite style grid
 in the variable z of the warp
     log10 B_i = median_i + sigma_i (z + c z^2),   z ~ N(0, 1),
-held flat below z = -1/(2c), where the warp turns over. That law beats a log-normal by 74 per cent
-in mean ladder error on held-out holodeck models.
+held flat below z = -1/(2c), where the warp turns over.
 
 All spectra are h^2 Omega_GW(f), dimensionless.
 """
