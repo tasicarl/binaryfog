@@ -35,7 +35,7 @@ from .priors import (AGAMMA_COV, AGAMMA_MU, NANOGRAV_GAUSSIAN, SURVEY_AVERAGE_GA
 from .profile import LEVELS_1D, LEVELS_2D, ProfileScan, preference, reference_lnL, region
 from .significance import sigma_from_gain
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 __all__ = ["Background", "FreeSpectrum", "Likelihood", "ProfileScan",
            "PARAM_NAMES", "PRIOR_BOX",
            "PTArcadeModel", "load_ptarcade", "power_law", "smbhb_power_law",

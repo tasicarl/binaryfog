@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "binaryfog"
-version = "0.1.0"
+version = "1.0.0"
 description = "The supermassive black hole binary background as a nuisance in pulsar timing array searches for new physics"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -20,7 +20,7 @@ maintainers = [
 ]
 keywords = ["pulsar timing arrays", "gravitational waves", "supermassive black hole binaries", "early universe"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering :: Astronomy",

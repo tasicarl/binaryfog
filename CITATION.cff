@@ -20,7 +20,7 @@ authors:
 repository-code: https://github.com/tasicarl/binaryfog
 doi: 10.5281/zenodo.24294394
 license: MIT
-version: 0.1.0
+version: 1.0.0
 abstract: >-
   The supermassive black hole binary background as a nuisance parameter in
   pulsar timing array searches for new physics. binaryfog supplies the
