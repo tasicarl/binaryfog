@@ -17,14 +17,13 @@ without calling holodeck, integrates over it inside the likelihood, and profiles
 astrophysical parameters, so that a limit carries the astrophysical uncertainty instead of assuming
 it away.
 
-> **Preliminary release.** Version 0.1.0 accompanies a paper in preparation. The interface may still
-> change, and the accuracy of the surrogate is quantified under *What is inside* below: it is good
-> enough for effects of a few units in `ln L`, but not by a wide margin.
+It accompanies the paper *Seeing through the fog: astrophysical priors and the evidence for new physics
+in pulsar timing arrays* by T. Bringmann, C. Gordon and C. Tasillo (2026).
 
 ## Install
 
 ```
-pip install -e .            # numpy and scipy; pandas for tables, pytest for the tests
+pip install binaryfog       # numpy and scipy; or pip install -e . from a clone of this repository
 python -m binaryfog.fetch   # the measured free spectra, into ~/.binaryfog/freespec
 ```
 
@@ -33,20 +32,20 @@ about 25 MB unpacked. All are CC-BY-4.0 and none of them is redistributed here.
 
 | name | array, release and noise model |
 |---|---|
-| `ng15_cp_v1` | NANOGrav 15 yr, 2024 release, uncorrelated common process |
+| `ng15_cp_v1` | NANOGrav 15 yr as distributed with PTArcade (2024), uncorrelated common process |
 | `ng15_hd_v1` | the same, Hellings–Downs |
-| `ng15_hdall_v1` | the same, Hellings–Downs inferred with a monopole, a dipole and a common process |
-| `ng15_hd_dmgp_v1` | the same, dispersion measure as a Gaussian process rather than piecewise offsets |
-| `ipta2_cp_v1` | IPTA DR2, uncorrelated common process |
+| `ng15_hdall_v1` | NANOGrav 15 yr, 2023 release, Hellings–Downs inferred with a monopole, a dipole and a common process |
+| `ng15_hd_dmgp_v1` | the same release, Hellings–Downs with the dispersion measure as a Gaussian process rather than piecewise offsets |
+| `ipta2_cp_v1` | IPTA DR2 as distributed with PTArcade (2024), uncorrelated common process |
 | `ng15_cp_v2` | NANOGrav 15 yr, 2026 re-run, uncorrelated common process |
 | `ng15_hd_v2` | the same, Hellings–Downs |
 | `ng15_hdall_v2` | the same, Hellings–Downs with the other correlated components |
 
 The 2026 products are the ones re-run after the parallel-tempering bug in `PTMCMCSampler`
 (erratum, *Astrophys. J. Lett.* **1006** (2026) L67). That record does not carry a corrected
-Gaussian-process product, so `ng15_hd_dmgp_v1` is the 2024 one. Each download is pinned to a
-specific Zenodo version, so a later release cannot silently change what you get. Which product is used changes limits by more than the choice of
-correlation pattern does.
+Gaussian-process product, so `ng15_hd_dmgp_v1` is the 2023 one. Each download is pinned to a
+specific Zenodo version, so a later release cannot silently change what you get. The paper uses
+`ng15_cp_v2` throughout and compares the others in its section 5.3.
 
 ## Quickstart
 
@@ -91,18 +90,17 @@ The point of the package is that the answer depends on how the binaries are trea
 the treatments easy to swap:
 
 ```python
-alone      = bf.Likelihood(data)                                   # no background at all
-published  = bf.Likelihood(data)                                   # their power law, their prior
-scan_pub   = bf.ProfileScan(published, bf.Sum(model.spectrum, bf.power_law), scan=...,
-                            nuisance={"log10_A": (-18, -13, "linear"), "gamma": (0, 7, "linear")},
-                            nuisance_prior=bf.ln_prior_agamma, astro_prior=None)
-population = bf.Likelihood(data, bf.Background())                  # this package's background
+no_binaries = bf.Likelihood(data)                                  # no background at all
+power_law   = bf.ProfileScan(bf.Likelihood(data), bf.Sum(model.spectrum, bf.power_law), scan=...,
+                             nuisance={"log10_A": (-18, -13, "linear"), "gamma": (0, 7, "linear")},
+                             nuisance_prior=bf.ln_prior_agamma, astro_prior=None)   # NANOGrav's (A, gamma) prior
+population  = bf.Likelihood(data, bf.Background())                 # this package's background
 ```
 
 `bf.reference_lnL` gives the best fit without the new physics for any of them, which is what turns
 a scan into a statement about whether the source is preferred.
 
-## Inside someone else's sampler
+## Use in a Markov chain sampler
 
 The common case is a Markov chain over the parameters of a new-physics model, in which the six
 astrophysical parameters are dealt with at every step. Two ways, with very different costs:
@@ -141,10 +139,12 @@ on top of the six astrophysical ones:
   the half-width to 4 per cent and the skew to 0.05 for a typical model, and to 0.15 dex, 15 per
   cent and 0.17 for the worst tenth of them. Evaluating it takes 0.18 milliseconds against the
   180 seconds holodeck needs for the same thing.
-  The library and the fit can be redone with the scripts in `training/`.
-* **The realisation distribution** is neither log-normal nor Gaussian. `binaryfog` uses the warp
-  `log10 h_c^2 = median + sigma (z + c z^2)` with `z` normal, which beats a log-normal by 74 per
-  cent in mean quantile-ladder error.
+  The library and the fit can be redone with the scripts in `training/`. Maps fitted the same way to
+  the 30 bins of IPTA DR2 are shipped as `Background(maps="ipta2")`; they are less accurate, 0.10 to
+  0.15 dex on the median.
+* **The realisation distribution** is skewed towards loud universes. `binaryfog` uses the warp
+  `log10 h_c^2 = median + sigma (z + c z^2)` with `z` normal, which describes holodeck's realisations
+  better than a log-normal or the map-Airy distribution (section 4.3 of the paper).
 * **The data** are the free-spectrum kernel densities that `ceffyl` and PTArcade read, with
   `ceffyl`'s conventions: the density is held flat below the grid and the model is rejected above
   it. The 2024 products carry a grid running far below the range the Markov chains visited, where
@@ -159,9 +159,14 @@ on top of the six astrophysical ones:
 
 ## Reproducing the paper
 
-`paper/` holds the scripts that produce every figure and number of the paper, together with their inputs:
+`paper/` holds the scripts that produce the figures and numbers of the paper, together with their inputs:
 the holodeck library, the free-spectrum grids and the stored scan outputs. `paper/run_figures.sh` rebuilds the
 figures and numbers from those inputs, `paper/run_scans.sh` reruns the scans; see `paper/README.md`.
+
+## Examples
+
+`examples/peaked_source.py` profiles a peaked source with and without the binary background and needs nothing
+but the package; `examples/ng15_phase_transition.py` does the same for NANOGrav's sound-wave model file.
 
 ## Tests
 
@@ -176,38 +181,22 @@ Tests whose inputs are missing skip themselves and say what is missing. The free
 need `python -m binaryfog.fetch` to have run. The model files are the ones released with the
 NANOGrav 15 yr new-physics search ([Zenodo 8092761](https://doi.org/10.5281/zenodo.8092761)) and
 reading them needs PTArcade, which is the `models` extra. Without it those tests
-say so and skip rather than failing on an import error. One test file compares the package value for value against
-the research scripts it was extracted from, and skips itself outside that repository.
+say so and skip rather than failing on an import error.
 
 ## Limits of this version
 
-* The six-parameter maps cover the NANOGrav 15 yr band, 1.98 to 27.7 nHz. Another array needs its
-  own library. `training/` holds the scripts that build one from public holodeck and fit the maps
-  to it (see `training/README.md`); `Background(maps="maps.npz")` then loads the result. Mind that a data product defines
-  its own frequencies: the IPTA DR2 free spectrum is not a set of harmonics of its time span, its
-  bins starting at 1.0496 nHz and spaced by 1.0858 nHz, and `Likelihood` therefore evaluates the
-  background on the frequencies stored with the data.
-* The realisation distribution is carried bin by bin. The correlations between bins are dropped,
-  as they are in the analyses this package is compared against.
-* Wilks' theorem is used for the interval thresholds (`LEVELS_1D`, `LEVELS_2D`). It does not hold
-  where the new-physics amplitude is bounded below by zero and its other parameters stop meaning
-  anything there. `sigma_from_gain` handles the boundary as a Chernoff mixture, which makes a
-  significance *larger* than a plain chi-square would; the parameters being undefined rather than
-  merely unconstrained pushes the other way and is not handled. See `significance.py` for both.
-  The tail probability is quoted one-sided, Z = Phi^-1(1 - p) (Cowan et al. 2011), so that one
-  parameter gives Z = sqrt(2 G); `sided="two"` gives the two-sided convention of Macias et al. 2018.
-  A difference between two fits converted the same way is insensitive to this; an absolute
-  significance is not.
-* A profile over many parameters can have more than one local maximum at a grid point, and the
-  neighbour sweeps cannot repair a point whose neighbours sit in the lower one too. For a phase
-  transition with the six astrophysical parameters free, one point needed 24 restarts to find the
-  higher maximum, which lies 0.5 above the lower in ln L. Rerun isolated low points with more
-  restarts before reading a contour off a scan.
+* The maps cover the NANOGrav 15 yr band, 1.98 to 27.7 nHz, and IPTA DR2. Another array needs its own library,
+  which `training/` builds from public holodeck (see `training/README.md`); `Background(maps="maps.npz")` loads it.
+* The realisation distribution is carried bin by bin; correlations between bins are neglected.
+* Interval thresholds follow Wilks' theorem, and `sigma_from_gain` treats a new-physics amplitude bounded at zero as a
+  Chernoff mixture, quoted one-sided (`sided="two"` for the two-sided convention); see `significance.py`.
+* A profile over many parameters can have several local maxima at a grid point. Rerun isolated low points of a scan
+  with more restarts before reading a contour off it.
 
 ## Citing
 
-Please cite the paper this package accompanies, which is in preparation, together with the software
-itself (see `CITATION.cff`). `binaryfog` builds on [holodeck](https://github.com/nanograv/holodeck)
+Please cite the paper this package accompanies (T. Bringmann, C. Gordon and C. Tasillo 2026) together with the
+software itself (see `CITATION.cff`). `binaryfog` builds on [holodeck](https://github.com/nanograv/holodeck)
 for the populations, on [`ceffyl`](https://github.com/astrolamb/ceffyl) for the shape of the data
 products, on [PTArcade](https://github.com/andrea-mitridate/PTArcade) for the new-physics model
 files, and on the NANOGrav 15 yr data set.
