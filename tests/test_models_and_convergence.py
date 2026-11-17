@@ -3,8 +3,7 @@ The model adapter, the convergence of the profile maximisation, and a published-
 
 The NANOGrav model files are a separate data release; point BINARYFOG_NG15_MODELS at the unpacked
 directory to run those tests. They also need PTArcade, which the files import, so run this file in
-an environment that has it. The other test file needs holodeck instead, for the research scripts
-it compares against, so the two files are usually run in different environments.
+an environment that has it.
 """
 import os
 import sys
@@ -29,16 +28,8 @@ except ImportError:
     HAVE_PTARCADE = False
 
 
-def _data_dir():
-    """Where the free spectra are: the download directory, or the research copy beside it."""
-    research = Path(__file__).resolve().parents[2] / "smbhb/data/freespec"
-    for d in (DEFAULT_DIR, research):
-        if (d / "ng15_hd_v2/density.npy").is_file():
-            return d
-    return None
-
-
-LOCAL_DATA = _data_dir()
+# the free spectra, where `python -m binaryfog.fetch` puts them
+LOCAL_DATA = DEFAULT_DIR if (DEFAULT_DIR / "ng15_hd_v2/density.npy").is_file() else None
 needs_models = pytest.mark.skipif(
     not MODELS or not HAVE_PTARCADE,
     reason=("BINARYFOG_NG15_MODELS is not set" if not MODELS else
@@ -281,9 +272,9 @@ def test_reproduces_the_published_cosmic_string_tension():
 def test_a_narrowed_prior_box_survives_the_rebuild_onto_the_data_frequencies():
     """Restricting a parameter's range must actually restrict the scan.
 
-    A Likelihood rebuilds the background on the data's own frequencies, which used to construct a
-    fresh object and silently discard a prior_box set on the instance. A systematic run that way
-    reproduces the unrestricted result exactly, which looks like a null effect rather than a bug.
+    A Likelihood rebuilds the background on the data's own frequencies. If the rebuild dropped a prior_box
+    set on the instance, a restricted scan would reproduce the unrestricted one exactly, which looks like a
+    null effect rather than a bug.
     """
     data = bf.FreeSpectrum.load("ng15_hd_v2", root=LOCAL_DATA, nbins=14)
     bg = bf.Background()

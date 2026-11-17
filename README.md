@@ -23,7 +23,7 @@ in pulsar timing arrays* by T. Bringmann, C. Gordon and C. Tasillo (2026).
 ## Install
 
 ```
-pip install binaryfog       # numpy and scipy; or pip install -e . from a clone of this repository
+pip install "binaryfog[table]"   # numpy, scipy and pandas, which returns scans as tables; or pip install -e ".[table]" from a clone
 python -m binaryfog.fetch   # the measured free spectra, into ~/.binaryfog/freespec
 ```
 

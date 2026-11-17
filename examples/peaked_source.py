@@ -4,11 +4,13 @@ with and without the binary background.
 
 The source is a broken power law, rising as f^3 like a causal cosmological background and falling
 as f^-4 above its peak,
-    h^2 Omega(f) = amp * (f/f_peak)^3 / (1 + (f/f_peak)^7)^(1)  (up to the shape below),
-so that it has two parameters: the peak frequency and the amplitude. The scan profiles over the
-amplitude and over the six astrophysical parameters of the background.
+    h^2 Omega(f) = A x^3 / (1 + x^7),   x = f / f_peak,
+with two parameters, the peak frequency and the amplitude A. The scan runs over the peak frequency and
+profiles over the amplitude and, with the binaries, over the six astrophysical parameters of the
+background under the NANOGrav priors. The data are the Hellings-Downs free spectrum of NANOGrav's
+corrected 2026 release.
 
-    python peaked_source.py            (a few minutes on 8 cores)
+    python peaked_source.py            (about a minute on 8 cores)
 """
 import numpy as np
 
@@ -36,6 +38,7 @@ if __name__ == "__main__":
         print(f"\n{label}:")
         print(f"  best fit: peak at {10 ** best['log10_fpeak'] * 1e9:.1f} nHz, "
               f"amplitude 1e{best['log10_amp']:.2f}, ln L = {best['lnL']:.2f}")
-        print(f"  2 sigma interval of the peak frequency: {10 ** lo * 1e9:.1f} to {10 ** hi * 1e9:.1f} nHz")
+        edge = ", reaching the end of the scanned range" if lo == fpeak[0] or hi == fpeak[-1] else ""
+        print(f"  2 sigma interval of the peak frequency: {10 ** lo * 1e9:.1f} to {10 ** hi * 1e9:.1f} nHz{edge}")
         if background is not None:
             print(f"  gain over the binaries alone: {bf.preference(table, like):.2f} ln L units")

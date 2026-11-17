@@ -5,7 +5,9 @@ The model is pt_sound.py from the NANOGrav 15 yr new-physics model files: a firs
 of strength alpha at temperature T_star with mean bubble separation H_star R_star, and three
 parameters a, b, c for the spectral shape. The scan is over alpha and H_star R_star; the
 temperature and the shape parameters are profiled, and so are the six astrophysical parameters of
-the binary background with the priors of arXiv:2306.16220.
+the binary background with the priors of arXiv:2306.16220. The data are the Hellings-Downs free spectrum of
+NANOGrav's corrected 2026 release, the correlation pattern of NANOGrav's own search. The two scans are
+written to pt_sound_alone.csv and pt_sound_binaries.csv in the working directory.
 
     BINARYFOG_NG15_MODELS=<unpacked model files> python ng15_phase_transition.py
 """
@@ -42,7 +44,8 @@ if __name__ == "__main__":
         print(f"  best fit: alpha = 1e{best['log10_alpha']:.2f}, H_star R_star = "
               f"1e{best['log10_H_R']:.2f}, T_star = 1e{best['log10_T_star']:.2f} GeV, "
               f"ln L = {best['lnL']:.2f}")
-        print(f"  1 sigma region covers {inside.sum() * cell:.2f} of the "
-              f"{len(table) * cell:.2f} square decades scanned")
+        scanned = np.ptp(grid["log10_alpha"]) * np.ptp(grid["log10_H_R"])
+        print(f"  1 sigma region covers about {inside.sum() * cell:.1f} of the "
+              f"{scanned:.1f} square decades scanned")
         if background is not None:
             print(f"  gain over the binaries alone: {bf.preference(table, like):.2f} ln L units")

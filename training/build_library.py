@@ -11,7 +11,8 @@ reads exactly these.
 
 Runs on public holodeck without modifications (tested with v1.7.1, commit 7a5cb8ae). Binaries that have not merged by
 today (holodeck returns a negative redshift for them) are removed here, by zeroing every cell of the (total mass,
-mass ratio, redshift) grid with such a corner, which is what holodeck's own library does since its PR #133.
+mass ratio, redshift) grid with such a corner, which is what holodeck's own library code does on its main branch
+since PR #133 (not yet in a release).
 
 A frequency grid is a measured data product, whose stored frequencies are the bin centres (the edges are the
 centres plus and minus half the spacing, which sets how many binaries fall in a bin and so how much the
@@ -207,14 +208,14 @@ def provenance():
 
 
 def read_points(path):
-    """(index, parameters) of every point of an existing library, numbered in file order."""
+    """(index, parameters) of every point of an existing library, with the index it carries there."""
     pts = []
     for line in Path(path).read_text().splitlines():
         if line.strip():
             r = json.loads(line)
             if "params" in r and "error" not in r:
-                pts.append((len(pts), [float(r["params"][k]) for k in PARAM_NAMES]))
-    return pts
+                pts.append((int(r["i"]), [float(r["params"][k]) for k in PARAM_NAMES]))
+    return sorted(pts)
 
 
 def main():
@@ -247,11 +248,12 @@ def main():
         pts = pts[:args.limit]
 
     out = Path(args.out)
-    done = set()
+    done, have_head = set(), False
     if out.exists():
         for line in out.read_text().splitlines():
             if line.strip():
                 r = json.loads(line)
+                have_head = have_head or "header" in r
                 if "i" in r and "error" not in r:
                     done.add(r["i"])
         print(f"resuming: {len(done)} points already in {out}", flush=True)
@@ -265,7 +267,8 @@ def main():
           f"{args.jobs} workers, holodeck {head['header']['holodeck_version']} -> {out}", flush=True)
     t0 = time.perf_counter()
     with open(out, "a", buffering=1) as fh, mp.Pool(args.jobs) as pool:
-        fh.write(json.dumps(head) + "\n")
+        if not have_head:
+            fh.write(json.dumps(head) + "\n")
         for n, r in enumerate(pool.imap_unordered(one_point, jobs), 1):
             fh.write(json.dumps(r) + "\n")
             if n % 20 == 0 or n == len(jobs) or "error" in r:

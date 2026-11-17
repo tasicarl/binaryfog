@@ -18,6 +18,7 @@ authors:
     affiliation: >-
       School of Physical and Chemical Sciences, University of Canterbury
 repository-code: https://github.com/tasicarl/binaryfog
+doi: 10.5281/zenodo.24294394
 license: MIT
 version: 0.1.0
 abstract: >-
@@ -32,3 +33,16 @@ keywords:
   - gravitational waves
   - supermassive black hole binaries
   - early universe
+references:
+  - type: article
+    title: >-
+      Seeing through the fog: astrophysical priors and the evidence for new
+      physics in pulsar timing arrays
+    authors:
+      - given-names: Torsten
+        family-names: Bringmann
+      - given-names: Chris
+        family-names: Gordon
+      - given-names: Carlo
+        family-names: Tasillo
+    year: 2026
