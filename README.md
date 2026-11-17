@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/tasicarl/binaryfog/main/paper/inputs/logo/binaryfog_logo_600_dark.png">
+    <img src="https://raw.githubusercontent.com/tasicarl/binaryfog/main/paper/inputs/logo/binaryfog_logo_600.png" alt="binaryfog" width="360">
+  </picture>
+</p>
+
 # binaryfog
 
 The supermassive black hole binary background as a nuisance in pulsar timing array searches for
